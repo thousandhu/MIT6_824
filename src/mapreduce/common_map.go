@@ -62,7 +62,6 @@ func doMap(
 		}
 		defer file.Close()
 		enc :=json.NewEncoder(file)
-		print("hzq")
 		mapResultEncoder[i] = enc
 	}
 

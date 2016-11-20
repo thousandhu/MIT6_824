@@ -56,6 +56,7 @@ func doReduce(
 			if !ok {
 				keyValues[kv.Key] = make([]string,0)
 			}
+			keyValues[kv.Key] = append(keyValues[kv.Key], kv.Value)
 		}
 	}
 
