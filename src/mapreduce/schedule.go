@@ -33,7 +33,6 @@ func (mr *Master) schedule(phase jobPhase) {
 	for each task, get a worker from registerChannel and do the work by call rpc operation. if ok put the
 	worker back into the registerChannel for other task.
 	use waitgroup to wait all task finish
-
 	*/
 	var wg sync.WaitGroup
 	for i := 0; i < ntasks; i++ {
@@ -45,12 +44,15 @@ func (mr *Master) schedule(phase jobPhase) {
 				worker := <-mr.registerChannel
 				doTaskArgs := DoTaskArgs{mr.jobName, mr.files[i], phase, i, nios}
 				ok := call(worker, "Worker.DoTask", doTaskArgs, new(struct{}))
+				/*hzq
+				if break from else, the part 4 will failure because the failure task also
+				break without retry.
+				 */
 				if ok {
 					go func(){mr.registerChannel <- worker}()
 					break
 				} else {
 					debug("worker: %s in jobname: %s error", worker, mr.jobName, i)
-					break
 				}
 			}
 		}(ntasks, nios, phase, i)
